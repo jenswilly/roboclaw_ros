@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <launch>
-
-    <arg name="dev" default="/dev/roboclaw"/>
+    <arg name="dev" default="/dev/ttyACM0"/>
     <arg name="baud" default="460800"/>
     <arg name="address" default="128"/>
-    <arg name="max_abs_linear_speed" default="1.5"/>
-    <arg name="max_abs_angular_speed" default="1.5"/>
+    <arg name="max_abs_linear_speed" default="1.8"/>
+    <arg name="max_abs_angular_speed" default="19.5"/>
 <!-- Wheels max acceleration m/s^2 (TODO: split in angular and linear acceleration) -->
     <arg name="acc_lim" default="1.0"/>
 <!-- 1957 ticks/rev ; 0.2 cm diam ; 0.6283186 m/rev -->
-    <arg name="ticks_per_meter" default="3114.66"/>
-    <arg name="base_width" default="0.4"/>
+<!-- JWJ: 990 ticks/rev; 0.08 m diam => 3939.1 ticks/m -->
+    <arg name="ticks_per_meter" default="3939.1"/>
+    <arg name="base_width" default="0.185"/>
     <arg name="run_diag" default="true"/>
 
     <node if="$(arg run_diag)" pkg="roboclaw_node" type="roboclaw_pyscript.py" name="roboclaw_node">
@@ -23,6 +23,4 @@
         <param name="~ticks_per_meter" value="$(arg ticks_per_meter)"/>
         <param name="~base_width" value="$(arg base_width)"/>
     </node>
-
-
 </launch>
