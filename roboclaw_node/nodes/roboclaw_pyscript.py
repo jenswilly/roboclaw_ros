@@ -218,6 +218,7 @@ class Node:
                 status1, enc1, crc1 = None, None, None
                 status2, enc2, crc2 = None, None, None
                 statusC, amp1, amp2 = None, None, None
+                speed1, speed2 = None, None
 
                 try:
                     status1, enc1, crc1 = roboclaw.ReadEncM1(self.address)
@@ -233,6 +234,14 @@ class Node:
                 except ValueError:
                     pass
 
+                try:
+                    status1, speed1, crc1 = roboclaw.ReadSpeedM1(self.address)
+                    status2, speed2, crc2 = roboclaw.ReadSpeedM2(self.address)
+                except ValueError:
+                    pass
+
+                if (speed1 != None) & (speed2 != None):
+                    rospy.logdebug( " Speed %d %d" % (speed1, speed2))
                 if (enc1 != None) & (enc2 != None):
                     rospy.logdebug(" Encoders %d %d" % (enc1, enc2))
                     self.encodm.update_publish(enc1, enc2)
@@ -282,8 +291,11 @@ class Node:
                 #Replaced to implement acc
                 #roboclaw.SpeedDistanceM1M2(self.address, vr_ticks, int(abs(vr_ticks*0.04)), vl_ticks, int(abs(vl_ticks*0.04)), 1)
                 #rospy.logdebug(" Acc ticks %d" % (int(self.ACC_LIM * self.TICKS_PER_METER)))
-                roboclaw.SpeedAccelDistanceM1(self.address, int(self.ACC_LIM * self.TICKS_PER_METER),vr_ticks, int(abs(vr_ticks*0.04)),1)
-                roboclaw.SpeedAccelDistanceM2(self.address, int(self.ACC_LIM * self.TICKS_PER_METER),vl_ticks, int(abs(vl_ticks*0.04)),1)
+                # roboclaw.SpeedAccelDistanceM1(self.address, int(self.ACC_LIM * self.TICKS_PER_METER),vr_ticks, int(abs(vr_ticks*0.04)),1)
+                # roboclaw.SpeedAccelDistanceM2(self.address, int(self.ACC_LIM * self.TICKS_PER_METER),vl_ticks, int(abs(vl_ticks*0.04)),1)
+
+                roboclaw.SpeedAccelM1( self.address, int(self.ACC_LIM * self.TICKS_PER_METER), vr_ticks )
+                roboclaw.SpeedAccelM2( self.address, int(self.ACC_LIM * self.TICKS_PER_METER), vl_ticks )
                 #Mixed command doesn't work
                 #roboclaw.SpeedAccelDistanceM1M2(self.address, int(self.ACC_LIM * self.TICKS_PER_METER),vr_ticks, int(abs(vr_ticks*0.04)), vl_ticks, int(abs(vl_ticks*0.04)), 1)
 
